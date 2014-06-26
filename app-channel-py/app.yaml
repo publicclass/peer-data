@@ -1,0 +1,15 @@
+application: peer-data
+version: py
+runtime: python27
+api_version: 1
+threadsafe: true
+
+inbound_services:
+  - channel_presence
+
+handlers:
+- url: /(.*\..*)
+  static_files: public/\1
+  upload: public/.*
+- url: /.*
+  script: app.app
