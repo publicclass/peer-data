@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>PeerData test</title>
+  </head>
+  <body>
+    <script src='build.js'></script>
+    <script charset="utf-8">
+        var pd = require('peer-data');
+        var signal = new pd.AppChannelSignal({room: 'test'});
+        signal.on('error', function(){ console.log('signal error', arguments) });
+        signal.on('open', function(e){ console.log('signal open', e.peer) });
+        signal.on('message', function(data){ console.log('signal message', data) });
+        signal.on('close', function(){ console.log('signal close') });
+
+        var peers = new pd.PeerData(signal);
+        peers.on('error', function(){ console.log('peer data error', arguments) });
+        peers.on('open', function(){ console.log('peer data open') });
+        peers.on('peer connected', function(){ console.log('peer data connected') });
+        peers.on('peer disconnected', function(){ console.log('peer data disconnected') });
+        peers.on('close', function(){ console.log('peer data close') });
+
+        var channel = peers.channel('reliable');
+        channel.on('error', function(){ console.log('reliable error', arguments) });
+        channel.on('open', function(e){ console.log('reliable open'); this.send('hi!'); });
+        channel.on('message', function(e){ console.log('reliable message'); });
+        channel.on('close', function(e){ console.log('reliable close'); });
+
+        var channel = peers.channel('unreliable', {maxRetransmits: 10});
+        channel.on('error', function(){ console.log('unreliable error', arguments) });
+        channel.on('open', function(e){ console.log('unreliable open'); this.send('hi!'); });
+        channel.on('message', function(e){ console.log('unreliable message'); });
+        channel.on('close', function(e){ console.log('unreliable close'); });
+
+
+    </script>
+  </body>
+</html>

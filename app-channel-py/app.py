@@ -26,20 +26,29 @@ class Room(ndb.Model):
             logging.warn('room is full')
             self.send(client_id, {
                 'type': 'full',
-                'num_clients': len(self.clients)
+                'clients': self.clients
             })
             return
 
-        # peers = [cid for cid in self.clients]
+        peers = [cid for cid in self.clients]
         self.clients.append(client_id)
         self.put()
 
-        if len(self.clients) >= MIN_CLIENTS:
-            self.send(self.clients, {
+        # send a connected event to the new peer for each of the currently
+        # connected clients
+        for cid in peers:
+            self.send(client_id, {
                 'type': 'connected',
-                'client_id': client_id,
-                'num_clients': len(self.clients)
+                'peer': cid,
+                'clients': self.clients
             })
+
+        # then send a connected event to each peer for the new guy (or girl!)
+        self.send(peers, {
+            'type': 'connected',
+            'peer': client_id,
+            'clients': self.clients
+        })
 
     @ndb.transactional
     def remove_client(self, client_id):
@@ -51,20 +60,23 @@ class Room(ndb.Model):
             self.key.delete()
         else:
             self.put()
-        self.send(self.clients, {
-            'type': 'disconnected',
-            'client_id': client_id,
-            'num_clients': len(self.clients)
-        })
+            self.send(self.clients, {
+                'type': 'disconnected',
+                'peer': client_id,
+                'clients': self.clients
+            })
 
-    def send(self, client_ids, message):
+    def send(self, client_ids, message, verify=False):
         if not isinstance(client_ids, list):
             client_ids = list([client_ids])
         if not isinstance(message, str):
             message = json.dumps(message)
         for client_id in client_ids:
-            logging.info('sending "%s" to "%s"' % (message, client_id))
-            channel.send_message(client_id, message)
+            if verify and client_id not in self.clients:
+                logging.warn('trying to send to a client not in the room')
+            else:
+                logging.info('sending "%s" to "%s"' % (message, client_id))
+                channel.send_message(client_id, message)
 
     def stats(self):
         return {
@@ -97,21 +109,21 @@ class DisconnectedPage(webapp2.RequestHandler):
 
 class ChannelPage(webapp2.RequestHandler):
     @as_json
-    def get(self, room_id, _):
+    def get(self, room_id, _, __):
         if room_id == '':
             raise Exception('must specify room id')
         client_id = build_id(room_id, str(uuid4()))
         return {
-            "token": channel.create_channel(client_id),
-            "user": client_id
+            'token': channel.create_channel(client_id),
+            'peer': client_id
         }
 
     @as_json
-    def post(self, room_id, client_id):
+    def post(self, room_id, from_id, to_id):
         if room_id == '':
             raise Exception('must specify room id')
-        if client_id == '':
-            raise Exception('must specify client id')
+        if from_id == '':
+            raise Exception('must specify a "from" client id')
 
         room = Room.get_by_id(room_id)
         if not room:
@@ -120,8 +132,22 @@ class ChannelPage(webapp2.RequestHandler):
         message = self.request.body
         logging.info(message)
 
-        peers = [cid for cid in room.clients if not cid == client_id]
-        room.send(peers, message)
+        # retry message for full rooms
+        if from_id not in room.clients and message == '{"type":"reconnect"}':
+            room.add_client(from_id)
+            return
+
+        if not to_id or to_id == '':
+            peers = [cid for cid in room.clients if not cid == from_id]
+            room.send(peers, {
+                'from': from_id,
+                'data': message
+            }, True)
+        else:
+            room.send(to_id, {
+                'from': from_id,
+                'data': message
+            }, True)
 
 
 def build_id(room, client_id):
@@ -133,7 +159,7 @@ def parse_id(id):
 
 
 app = webapp2.WSGIApplication([
-    (r"{}/?([^/]*)/?([^/]*)".format(PREFIX), ChannelPage),
+    (r"{}/?([^/]*)/?([^/]*)/?([^/]*)".format(PREFIX), ChannelPage),
     ("/_ah/channel/connected/", ConnectedPage),
     ("/_ah/channel/disconnected/", DisconnectedPage)
 ], debug=True)
