@@ -7,9 +7,6 @@ and reliable API for peer-to-peer data channels, both reliable and unreliable.
 
 ```
 var signal = new AppChannelSignal({room: 'test'});
-signal.on('open', function(){ console.log('signal open') });
-signal.on('message', function(){ console.log('signal message') });
-signal.on('close', function(){ console.log('signal close') });
 
 var peers = new PeerData(signal);
 peers.on('open', function(){ console.log('peer data open') });
@@ -22,10 +19,7 @@ channel.on('open', function(e){ console.log('reliable open'); });
 channel.on('message', function(e){ console.log('reliable message'); });
 channel.on('close', function(e){ console.log('reliable close'); });
 
-var channel = peers.channel('unreliable', {
-  maxRetransmitTime: 500,
-  maxRetransmits: 10
-})
+var channel = peers.channel('unreliable', {maxRetransmits: 10});
 channel.on('open', function(e){ console.log('unreliable open'); });
 channel.on('message', function(e){ console.log('unreliable message'); });
 channel.on('close', function(e){ console.log('unreliable close'); });
