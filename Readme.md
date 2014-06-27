@@ -12,10 +12,10 @@ signal.on('message', function(){ console.log('signal message') });
 signal.on('close', function(){ console.log('signal close') });
 
 var peers = new PeerData(signal);
-signal.on('open', function(){ console.log('peer data open') });
-signal.on('peer connected', function(){ console.log('peer data connected') });
-signal.on('peer disconnected', function(){ console.log('peer data disconnected') });
-signal.on('close', function(){ console.log('peer data close') });
+peers.on('open', function(){ console.log('peer data open') });
+peers.on('peer connected', function(){ console.log('peer data connected') });
+peers.on('peer disconnected', function(){ console.log('peer data disconnected') });
+peers.on('close', function(){ console.log('peer data close') });
 
 var channel = peers.channel('reliable');
 channel.on('open', function(e){ console.log('reliable open'); });
