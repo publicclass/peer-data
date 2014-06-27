@@ -22,13 +22,13 @@
         var channel = peers.channel('reliable');
         channel.on('error', function(){ console.log('reliable error', arguments) });
         channel.on('open', function(e){ console.log('reliable open'); this.send('hi!'); });
-        channel.on('message', function(e){ console.log('reliable message'); });
+        channel.on('message', function(message, from){ console.log('reliable message', message, from); });
         channel.on('close', function(e){ console.log('reliable close'); });
 
         var channel = peers.channel('unreliable', {maxRetransmits: 10});
         channel.on('error', function(){ console.log('unreliable error', arguments) });
         channel.on('open', function(e){ console.log('unreliable open'); this.send('hi!'); });
-        channel.on('message', function(e){ console.log('unreliable message'); });
+        channel.on('message', function(message, from){ console.log('unreliable message', message, from); });
         channel.on('close', function(e){ console.log('unreliable close'); });
 
 
