@@ -1,37 +1,39 @@
 <html>
   <head>
+    <meta charset="utf-8">
     <title>PeerData test</title>
+    <style media="screen">
+      html, body {
+        margin: 0;
+        padding: 0;
+        line-height: 0;
+        font-size: 0;
+      }
+      iframe {
+        width: 50%;
+        height: 50%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        display: inline-block;
+        box-sizing: border-box;
+      }
+    </style>
   </head>
   <body>
-    <script src='build.js'></script>
     <script charset="utf-8">
-        var pd = require('peer-data');
-        var signal = new pd.AppChannelSignal({room: 'test'});
-        signal.on('error', function(){ console.log('signal error', arguments) });
-        signal.on('open', function(e){ console.log('signal open', e.peer) });
-        signal.on('message', function(data){ console.log('signal message', data) });
-        signal.on('close', function(){ console.log('signal close') });
+      addFrame('./client.html?room=test&name=alice', 0);
+      addFrame('./client.html?room=test&name=bob', 0);
+      addFrame('./client.html?room=test&name=caesar', 2000);
+      addFrame('./client.html?room=test&name=dave', 3000);
 
-        var peers = new pd.PeerData(signal);
-        peers.on('error', function(){ console.log('peer data error', arguments) });
-        peers.on('open', function(){ console.log('peer data open') });
-        peers.on('peer connected', function(){ console.log('peer data connected') });
-        peers.on('peer disconnected', function(){ console.log('peer data disconnected') });
-        peers.on('close', function(){ console.log('peer data close') });
-
-        var channel = peers.channel('reliable');
-        channel.on('error', function(){ console.log('reliable error', arguments) });
-        channel.on('open', function(e){ console.log('reliable open'); this.send('hi!'); });
-        channel.on('message', function(message, from){ console.log('reliable message', message, from); });
-        channel.on('close', function(e){ console.log('reliable close'); });
-
-        var channel = peers.channel('unreliable', {maxRetransmits: 10});
-        channel.on('error', function(){ console.log('unreliable error', arguments) });
-        channel.on('open', function(e){ console.log('unreliable open'); this.send('hi!'); });
-        channel.on('message', function(message, from){ console.log('unreliable message', message, from); });
-        channel.on('close', function(e){ console.log('unreliable close'); });
-
-
+      function addFrame(src, wait){
+        setTimeout(function(){
+          var iframe = document.createElement('iframe');
+          iframe.src = src;
+          document.body.appendChild(iframe);
+        }, wait);
+      }
     </script>
   </body>
 </html>

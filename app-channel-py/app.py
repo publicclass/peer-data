@@ -10,7 +10,7 @@ from google.appengine.ext import ndb
 PREFIX = '/channel'
 SEPARATOR = '=='
 MIN_CLIENTS = 2
-MAX_CLIENTS = 2
+MAX_CLIENTS = 4
 
 
 class Room(ndb.Model):
