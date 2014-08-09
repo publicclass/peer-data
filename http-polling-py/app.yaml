@@ -1,0 +1,12 @@
+application: peer-data
+version: http-polling-py
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /(.*\..*)
+  static_files: public/\1
+  upload: public/.*
+- url: /.*
+  script: app.app

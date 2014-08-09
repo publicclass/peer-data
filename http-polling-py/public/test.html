@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>PeerData test</title>
+    <style media="screen">
+      html, body {
+        margin: 0;
+        padding: 0;
+        line-height: 0;
+        font-size: 0;
+      }
+      iframe {
+        width: 50%;
+        height: 50%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        display: inline-block;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <script charset="utf-8">
+      addFrame('./client.html?room=test&name=alice', 0);
+      addFrame('./client.html?room=test&name=bob', 0);
+      addFrame('./client.html?room=test&name=caesar', 2000);
+      addFrame('./client.html?room=test&name=dave', 3000);
+
+      function addFrame(src, wait){
+        setTimeout(function(){
+          var iframe = document.createElement('iframe');
+          iframe.src = src;
+          document.body.appendChild(iframe);
+        }, wait);
+      }
+    </script>
+  </body>
+</html>
