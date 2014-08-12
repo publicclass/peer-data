@@ -1,8 +1,5 @@
 import functools
 import json
-import webapp2
-
-from google.appengine.ext import ndb
 
 
 def as_json(func):
@@ -33,20 +30,8 @@ def as_json(func):
 # Extensions to the jsonifying of python results
 def json_extras(obj):
     """Extended json processing of types."""
-    if hasattr(obj, "get_result"):  # RPC
-        return obj.get_result()
     if hasattr(obj, "strftime"):  # datetime or date
         return obj.isoformat()
-    if isinstance(obj, ndb.GeoPt):
-        return {"lat": obj.lat, "lon": obj.lon}
-    if isinstance(obj, ndb.Key):
-        r = webapp2.get_request()
-        if r.get("recurse", default_value=False):
-            item = obj.get()
-            if item is None:
-                return obj.urlsafe()
-            item = item.to_dict()
-            item["$class"] = obj.kind()
-            return item
-        return obj.urlsafe()
+    if isinstance(obj, set):
+        return list(obj)
     return None

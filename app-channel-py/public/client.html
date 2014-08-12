@@ -45,7 +45,8 @@
 
       var channelState = {
         reliable: 'n/a',
-        unreliable: 'n/a'
+        unreliable: 'n/a',
+        messages: []
       };
 
       var pd = require('peer-data');
@@ -74,6 +75,7 @@
       });
       channel.on('message', function(message, from){
         console.log('reliable message', message, from);
+        channelState.messages.push(['< reliable', message, from]);
       });
       channel.on('close', function(e){
         console.log('reliable close');
@@ -92,6 +94,7 @@
       });
       channel.on('message', function(message, from){
         console.log('unreliable message', message, from);
+        channelState.messages.push(['< unreliable', message, from]);
       });
       channel.on('close', function(e){
         console.log('unreliable close');
@@ -103,11 +106,24 @@
       function outputState(){
         var s = '';
         s += 'signal: '+signal.state+'\n';
+        // s += 'signal messages sent: ' + signal.messages.sent +'\n';
+        // s += 'signal messages recv: ' + signal.messages.recv +'\n';
         s += 'peer data: '+peers.state+'\n';
         s += 'peer data id: '+peers.from+'\n';
         s += 'peer data peers: '+Object.keys(peers.peers).length+'\n';
+        s += Object.keys(peers.peers).map(function(id){
+          var peer = peers.peers[id];
+          var con = peers.peers[id].peerConnection;
+          return ' - (' + id + ')\n'
+            + '     signalingState: ' + con.signalingState + '\n'
+            + '     iceGatheringState: ' + con.iceGatheringState + '\n'
+            + '     iceConnectionState: ' + con.iceConnectionState
+        }).join('\n') + '\n';
         s += 'reliable state: ' + channelState.reliable+'\n';
         s += 'unreliable state: ' + channelState.unreliable+'\n';
+        s += 'messages: \n' + channelState.messages.map(function(arr){
+          return '  ' + arr.join(' ') + '\n';
+        }).join('\n') + '\n';
         state.innerText = s;
       }
 
