@@ -6,7 +6,7 @@ and reliable API for peer-to-peer data channels, both reliable and unreliable.
 ## Example
 
 ```
-var signal = new AppChannelSignal({room: 'test'});
+var signal = new HTTPPollingSignal({room: 'test'});
 
 var peers = new PeerData(signal);
 peers.on('open', function(){ console.log('peer data open') });
@@ -28,7 +28,7 @@ channel.on('close', function(e){ console.log('unreliable close'); });
 
 ## API
 
-### new AppChannelSignal(options)
+### new Signal(options)
 
 Signals are responsible for the initial handshake and peer presence (connected,
 disconnected).
@@ -41,11 +41,11 @@ Events:
 - `message` {from:String, data:JSON}
 - `close`
 
-### AppChannelSignal#send(message)
+### Signal#send(message)
 
 Broadcasts a message to all clients connected to the signal.
 
-### AppChannelSignal#close()
+### Signal#close()
 
 Closes the connection to the signal. Will also disconnect from any peer data
 connections using this signal.
