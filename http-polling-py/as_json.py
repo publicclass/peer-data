@@ -1,5 +1,6 @@
 import functools
 import json
+import logging
 
 
 def as_json(func):
@@ -13,6 +14,7 @@ def as_json(func):
                 resp = {}
         except Exception as e:
             self.response.set_status(400)
+            logging.exception(e)
             resp = {"error": e.__class__.__name__, "message": e.message}
         if not isinstance(resp, str) and not isinstance(resp, unicode):
             resp = json.dumps(resp, default=json_extras)
@@ -32,4 +34,6 @@ def json_extras(obj):
     """Extended json processing of types."""
     if hasattr(obj, "strftime"):  # datetime or date
         return obj.isoformat()
+    if isinstance(obj, set):
+        return list(obj)
     return None
