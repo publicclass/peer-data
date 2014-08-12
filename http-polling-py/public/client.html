@@ -71,11 +71,14 @@
       channel.on('open', function(e){
         console.log('reliable open');
         channelState.reliable = 'open';
-        this.send('hi from '+args.name);
+        var msg = 'hi from '+args.name;
+        var num = this.send(msg);
+        var len = Object.keys(peers.peers).length;
+        channelState.messages.push(['> reliable', num, len, msg, peers.from]);
       });
       channel.on('message', function(message, from){
         console.warn('reliable message', message, from);
-        channelState.messages.push(['reliable', message, from]);
+        channelState.messages.push(['< reliable', message, from]);
       });
       channel.on('close', function(e){
         console.log('reliable close');
@@ -90,11 +93,14 @@
       channel.on('open', function(e){
         console.log('unreliable open');
         channelState.unreliable = 'open';
-        this.send('hi from '+args.name);
+        var msg = 'hi from '+args.name;
+        var num = this.send(msg);
+        var len = Object.keys(peers.peers).length;
+        channelState.messages.push(['> unreliable', num, len , msg, peers.from]);
       });
       channel.on('message', function(message, from){
         console.log('unreliable message', message, from);
-        channelState.messages.push(['unreliable', message, from]);
+        channelState.messages.push(['< unreliable', message, from]);
       });
       channel.on('close', function(e){
         console.log('unreliable close');
@@ -106,6 +112,8 @@
       function outputState(){
         var s = '';
         s += 'signal: '+signal.state+'\n';
+        s += 'signal messages sent: ' + signal.messages.sent +'\n';
+        s += 'signal messages recv: ' + signal.messages.recv +'\n';
         s += 'peer data: '+peers.state+'\n';
         s += 'peer data id: '+peers.from+'\n';
         s += 'peer data peers: '+Object.keys(peers.peers).length+'\n';
@@ -120,8 +128,8 @@
         s += 'reliable state: ' + channelState.reliable+'\n';
         s += 'unreliable state: ' + channelState.unreliable+'\n';
         s += 'messages: \n' + channelState.messages.map(function(arr){
-          return ' - ' + arr.join(' ') + '\n';
-        });
+          return '  ' + arr.join(' ') + '\n';
+        }).join('\n') + '\n';
         state.innerText = s;
       }
 
