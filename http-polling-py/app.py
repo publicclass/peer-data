@@ -77,7 +77,8 @@ class Room():
             if verify and client_id not in self.clients():
                 logging.warn('trying to send to a client not in the room')
             else:
-                logging.info('sending "%s" to "%s"' % (message, client_id))
+                logging.info('sending %s bytes to "%s"' %
+                             (len(message), client_id))
                 append(CLIENT_MESSAGES % ({
                     'room_id': self.room_id,
                     'client_id': client_id
@@ -137,7 +138,7 @@ class ChannelPage(webapp2.RequestHandler):
 
         # messages are optional (just polling otherwise)
         if len(message) > 0:
-            logging.info(message)
+            # logging.info(message)
 
             # retry message for full rooms
             reconnect = '{"type":"reconnect"}'
@@ -165,13 +166,13 @@ class ChannelPage(webapp2.RequestHandler):
 
 
 def append(key, value, time=0, retries=5):
-    logging.info('append("%s", %s)' % (key, value))
+    # logging.info('append("%s", %s)' % (key, value))
     client = memcache.Client()
     attempt = 1
     while attempt <= retries:  # retry loop
-        logging.info('attempt %s/%s' % (attempt, retries))
+        # logging.info('attempt %s/%s' % (attempt, retries))
         current_set = client.gets(key)
-        logging.info('current set: %s' % current_set)
+        # logging.info('current set: %s' % current_set)
         if not current_set:  # create new set
             client.set(key, set([value]), time=time)
             return True  # success!
@@ -186,7 +187,7 @@ def append(key, value, time=0, retries=5):
 
 
 def remove(key, value, time=0, retries=5):
-    logging.info('remove(%s, %s)' % (key, value))
+    # logging.info('remove(%s, %s)' % (key, value))
     client = memcache.Client()
     while retries > 0:  # retry loop
         retries -= 1
@@ -199,12 +200,15 @@ def remove(key, value, time=0, retries=5):
 
 
 def get_and_empty(key, time=0, retries=5):
-    logging.info('get_and_empty(%s)' % (key))
+    # logging.info('get_and_empty(%s)' % (key))
     client = memcache.Client()
     while retries > 0:  # retry loop
         retries -= 1
         current_set = client.gets(key)
         if client.cas(key, set(), time=time):
+            if len(current_set) > 0:
+                logging.info('emptied %s items from %s' %
+                             (len(current_set), key))
             return current_set
     logging.error('failed to get_and_empty %s' % (key))
     return None
