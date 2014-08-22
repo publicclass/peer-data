@@ -9,6 +9,7 @@
   "main": "index.js",
   "scripts": [
     "lib/app-channel-signal.js",
+    "lib/signal-muxer.js",
     "lib/peer-data.js",
     "lib/peer-channel.js",
     "lib/peer.js",
