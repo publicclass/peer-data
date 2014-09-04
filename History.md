@@ -1,4 +1,10 @@
 
+0.4.0 / 2014-09-04
+==================
+
+ * Send the request-for-offer when negotiationneeded
+ * Logging more and less
+
 0.3.0 / 2014-09-04
 ==================
 

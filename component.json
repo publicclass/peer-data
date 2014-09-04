@@ -1,7 +1,7 @@
 {
   "name": "peer-data",
   "repo": "publicclass/peer-data",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "dependencies": {
     "component/emitter": "1.1.3",
     "visionmedia/debug": "1.0.2"
