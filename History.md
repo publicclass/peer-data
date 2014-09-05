@@ -1,4 +1,10 @@
 
+0.6.0 / 2014-09-05
+==================
+
+ * Added media constraints to offer/answer
+ * Added back google stun server as default ice server
+
 0.5.0 / 2014-09-04
 ==================
 
