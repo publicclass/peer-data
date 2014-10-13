@@ -1,4 +1,9 @@
 
+0.7.1 / 2014-10-14
+==================
+
+ * Silence the 'sending to peer without open data channel' warning, now a debug()
+
 0.7.0 / 2014-10-13
 ==================
 
