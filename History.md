@@ -1,4 +1,14 @@
 
+0.8.0 / 2014-10-22
+==================
+
+ * Fixed issues with the signalling data channel
+ * Removed app signal connect hack
+ * Don't close the entire peer-channel because a single channel closed
+ * Implemented json, string and binary message support
+ * Stricted state checking in peer-channel
+ * Changed the debug naming format
+
 0.7.1 / 2014-10-14
 ==================
 
