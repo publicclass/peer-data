@@ -1,4 +1,9 @@
 
+0.8.1 / 2014-10-23
+==================
+
+ * Set the iframe to absolute to stay out of the dom layout (and create scrollbars)
+
 0.8.0 / 2014-10-22
 ==================
 
