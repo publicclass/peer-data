@@ -10,6 +10,7 @@
   "scripts": [
     "lib/app-channel-signal.js",
     "lib/signal-muxer.js",
+    "lib/supported.js",
     "lib/peer-data.js",
     "lib/peer-channel.js",
     "lib/peer.js",
