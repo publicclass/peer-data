@@ -33,6 +33,8 @@ channel.on('close', function(e){ console.log('unreliable close'); });
 Signals are responsible for the initial handshake and peer presence (connected,
 disconnected).
 
+__NOTE: By version 1.0 this will be moved into a separate module__
+
 Options:
 - `room`
 
