@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "component build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Robert Sköld <robert@publicclass.se>",
+  "license": "ISC",
+  "devDependencies": {
+    "component": "^1.0.0-rc7"
+  }
 }
