@@ -1,4 +1,10 @@
 
+0.9.0 / 2014-10-27
+==================
+
+ * Added support check (`require('peer-data').supported`)
+ * Bumped debug dependency to 2.1.0
+
 0.8.1 / 2014-10-23
 ==================
 
